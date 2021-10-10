@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SideBar from './SideBar/SideBar';
 import styled from 'styled-components';
+import Header from './Header';
+import { deviceSize } from '../utils/device';
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,7 +14,6 @@ const Wrapper = styled.div`
 const Content = styled.div`
   flex: 1 1 600px;
   overflow-y: auto;
-  padding: 5px 20px;
 `;
 
 interface Props {
@@ -20,10 +21,38 @@ interface Props {
 }
 
 const Layout = ({ children }: Props) => {
+  const [isMobile, setMobile] = useState(false);
+  const [isVisible, setVisibility] = useState(false);
+
+  useEffect(() => {
+    if (isMobile && isVisible) {
+      setVisibility(false);
+    }
+  }, [isMobile, isVisible]);
+
+  const resize = () => {
+    setMobile(window.innerWidth < deviceSize.tablet);
+  };
+
+  const toggleVisibility = () => {
+    setVisibility(!isVisible);
+  };
+
+  useEffect(() => {
+    // TODO: Use debouce function here
+    window.addEventListener('resize', resize);
+    return () => {
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
   return (
     <Wrapper>
-      <SideBar />
-      <Content>{children}</Content>
+      {isVisible && <SideBar onHide={toggleVisibility} />}
+      <Content>
+        <Header sideBar={!isVisible} onSideBarClick={toggleVisibility} />
+        <div style={{ marginTop: 50 }}>{children}</div>
+      </Content>
     </Wrapper>
   );
 };

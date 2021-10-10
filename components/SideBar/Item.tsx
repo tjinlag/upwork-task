@@ -1,7 +1,7 @@
+import { useRouter } from 'next/dist/client/router';
+import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
-import Link from 'next/link';
-import { useRouter } from 'next/dist/client/router';
 
 const Wrapper = styled.div`
   padding: 10px;
